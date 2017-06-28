@@ -2,6 +2,19 @@ user_name = 'Harsh Vardhan'
 user_email = 'harsh59v@gmail.com'
 user_token = "Your-Token" 
 
+def gitconfig(user_name, user_email, user_token):
+    out, err, retcode = _system('git config --local user.name ' + user_name)
+    out, err, retcode = _system('git config --local user.email ' + user_email)
+    out, err, retcode = _system('git config --global push.default simple')
+    protocol = os.getenv("GIT_REPO").split("//")[0]
+    github_repo = os.getenv("GIT_REPO").split("//")[1]
+
+    if protocol != 'https:':
+        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
+
+    out, err, retcode = _system('git remote set-url origin ' + final_url)
+    branch_name = str(time.time()) + '-'+ user_name
+    out, err, retcode = _system('git checkout -b ' + branch_name)
 
 gitconfig(user_name, user_email, user_token)
 
@@ -572,20 +585,6 @@ def _system(cmd):
     out, err = ret.communicate()
     return out, err, ret.returncode
 
-def gitconfig(user_name, user_email, user_token):
-    out, err, retcode = _system('git config --local user.name ' + user_name)
-    out, err, retcode = _system('git config --local user.email ' + user_email)
-    out, err, retcode = _system('git config --global push.default simple')
-    protocol = os.getenv("GIT_REPO").split("//")[0]
-    github_repo = os.getenv("GIT_REPO").split("//")[1]
-
-    if protocol != 'https:':
-        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
-
-    out, err, retcode = _system('git remote set-url origin ' + final_url)
-    branch_name = str(time.time()) + '-'+ user_name
-    out, err, retcode = _system('git checkout -b ' + branch_name)
-
 def save(model, os_path, contents_manager):
     """ 
     Saves the changes to your local machine, it is still not on the internet.
@@ -599,7 +598,7 @@ def save(model, os_path, contents_manager):
         # FLAG SUCCESS, ask push?
     else:
         print("ERROR: " + str(retcode))  # Not the best way to report errors
-        
+
 c.FileContentsManager.post_save_hook = save
 
 ## 
