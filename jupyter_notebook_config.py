@@ -575,6 +575,8 @@ def save(model, os_path, contents_manager):
     Saves the changes to your local machine, it is still not on the internet.
     Commits the modified file in the repository.
     """
+    out, err, retcode = _system('git add -u')
+    out, err, retcode = _system('git reset -- jupyter_notebook_config.py')
     out, err, retcode = _system('git commit -a -m ' + '"Hey there, here\'s a hook"')
     out, err, retcode = _system('git push -u origin dev')
 
