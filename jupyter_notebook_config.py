@@ -596,11 +596,7 @@ def gitconfig(user_name, user_email, user_token, branch_name):
     protocol = os.getenv("GIT_REPO").split("//")[0]
     github_repo = os.getenv("GIT_REPO").split("//")[1]
 
-    if protocol != 'https:': da326030-19ab-4daa-9b9d-8af1be69f608
-
-        final_url = 'https://'+ github_user_name+':'+ user_token + '@' + github_repo
-    else:
-        final_url = 'https://'+ github_user_name+':'+ user_token + '@' + github_repo
+    final_url = 'https://'+ github_user_name+':'+ user_token + '@' + github_repo
 
     out, err, retcode = _system('git remote set-url origin ' + final_url)
     out, err, retcode = _system('git checkout -b ' + branch_name)
