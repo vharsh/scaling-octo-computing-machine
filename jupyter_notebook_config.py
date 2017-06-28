@@ -593,11 +593,13 @@ def gitconfig(user_name, user_email, user_token):
 
     if protocol != 'https:':
         final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
+    else:
+        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
 
     out, err, retcode = _system('git remote set-url origin ' + final_url)
     branch_name = str(time.time()) + '-'+ user_name
     out, err, retcode = _system('git checkout -b ' + branch_name)
-    
+
 gitconfig(user_name, user_email, user_token)
 
 c.FileContentsManager.post_save_hook = save
