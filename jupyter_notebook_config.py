@@ -1,5 +1,5 @@
-user = 'Harsh Vardhan'
-email = 'harsh59v@gmail.com'
+user_name = 'Harsh Vardhan'
+user_email = 'harsh59v@gmail.com'
 # Configuration file for jupyter-notebook.
 
 #------------------------------------------------------------------------------
@@ -572,8 +572,8 @@ def save(model, os_path, contents_manager):
     Saves the changes to your local machine, it is still not on the internet.
     Commits the modified file in the repository.
     """
-    out, err, retcode = _system('git config --local user.name ' + user)
-    out, err, retcode = _system('git config --local user.email ' + email)
+    out, err, retcode = _system('git config --local user.name ' + user_name)
+    out, err, retcode = _system('git config --local user.email ' + user_email)
     out, err, retcode = _system('git config --global push.default simple')
     out, err, retcode = _system('git checkout -b dev')
 
