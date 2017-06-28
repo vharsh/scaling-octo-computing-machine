@@ -1,7 +1,13 @@
-user_name = 'Harsh Vardhan'
-user_email = 'harsh59v@gmail.com'
-user_token = "Your-Token" 
+import os
+import subprocess
+import uuid
 
+
+user_name = 'Satyam Zode'
+github_user_name = 'satyamz'
+user_email = 'satyamzode@gmail.com'
+user_token = "d9fb10dfa0e34f6a0c86208e372c357bb52bca64" 
+branch_name = uuid.uuid4().hex + '-'+ github_user_name
 
 # Configuration file for jupyter-notebook.
 
@@ -560,9 +566,6 @@ user_token = "Your-Token"
 #  
 #  - path: the filesystem path to the file just written - model: the model
 #  representing the file - contents_manager: this ContentsManager instance
-import os
-import subprocess
-import time
 
 def _system(cmd):
     ret = subprocess.Popen(cmd, shell=True, stdin = subprocess.PIPE,
@@ -577,32 +580,32 @@ def save(model, os_path, contents_manager):
     """
     out, err, retcode = _system('git add -u')
     out, err, retcode = _system('git reset -- jupyter_notebook_config.py')
-    out, err, retcode = _system('git commit -a -m ' + '"Hey there, here\'s a hook"')
-    out, err, retcode = _system('git push -u origin dev')
+    out, err, retcode = _system('git commit -a -m ' + 'update file')
+    out, err, retcode = _system('git push origin '+ branch_name)
 
     if retcode == 0:
         pass
         # FLAG SUCCESS, ask push?
     else:
-        print("ERROR: " + str(retcode))  # Not the best way to report errors
+        print("ERROR: " + str(err))
 
-def gitconfig(user_name, user_email, user_token):
+def gitconfig(user_name, user_email, user_token, branch_name):
     out, err, retcode = _system('git config --local user.name ' + user_name)
     out, err, retcode = _system('git config --local user.email ' + user_email)
     out, err, retcode = _system('git config --global push.default simple')
     protocol = os.getenv("GIT_REPO").split("//")[0]
     github_repo = os.getenv("GIT_REPO").split("//")[1]
 
-    if protocol != 'https:':
-        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
+    if protocol != 'https:': da326030-19ab-4daa-9b9d-8af1be69f608
+
+        final_url = 'https://'+ github_user_name+':'+ user_token + '@' + github_repo
     else:
-        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
+        final_url = 'https://'+ github_user_name+':'+ user_token + '@' + github_repo
 
     out, err, retcode = _system('git remote set-url origin ' + final_url)
-    branch_name = str(time.time()) + '-'+ user_name
     out, err, retcode = _system('git checkout -b ' + branch_name)
 
-gitconfig(user_name, user_email, user_token)
+gitconfig(user_name, user_email, user_token, branch_name)
 
 c.FileContentsManager.post_save_hook = save
 
