@@ -1,5 +1,10 @@
 user_name = 'Harsh Vardhan'
 user_email = 'harsh59v@gmail.com'
+user_token = "Your-Token" 
+
+
+gitconfig(user_name, user_email, user_token)
+
 # Configuration file for jupyter-notebook.
 
 #------------------------------------------------------------------------------
@@ -520,7 +525,7 @@ user_email = 'harsh59v@gmail.com'
 
 ## Mixin for ContentsAPI classes that interact with the filesystem.
 #  
-#  Provides facilities for reading, writing, and copying both notebooks and
+#  Provides facilities for reading, wripassting, and copying both notebooks and
 #  generic files.
 #  
 #  Shared by FileContentsManager and FileCheckpoints.
@@ -557,35 +562,44 @@ user_email = 'harsh59v@gmail.com'
 #  
 #  - path: the filesystem path to the file just written - model: the model
 #  representing the file - contents_manager: this ContentsManager instance
+import os
 import subprocess
+import time
 
 def _system(cmd):
     ret = subprocess.Popen(cmd, shell=True, stdin = subprocess.PIPE,
     stdout = subprocess.PIPE, stderr = subprocess.PIPE, close_fds = True)
     out, err = ret.communicate()
-    print('hey')
     return out, err, ret.returncode
 
+def gitconfig(user_name, user_email, user_token):
+    out, err, retcode = _system('git config --local user.name ' + user_name)
+    out, err, retcode = _system('git config --local user.email ' + user_email)
+    out, err, retcode = _system('git config --global push.default simple')
+    protocol = os.getenv("GIT_REPO").split("//")[0]
+    github_repo = os.getenv("GIT_REPO").split("//")[1]
+
+    if protocol != 'https:':
+        final_url = 'https://'+ user_name+':'+ user_token + '@' + github_repo
+
+    out, err, retcode = _system('git remote set-url origin ' + final_url)
+    branch_name = str(time.time()) + '-'+ user_name
+    out, err, retcode = _system('git checkout -b ' + branch_name)
 
 def save(model, os_path, contents_manager):
     """ 
     Saves the changes to your local machine, it is still not on the internet.
     Commits the modified file in the repository.
     """
-    out, err, retcode = _system('git config --local user.name ' + user_name)
-    out, err, retcode = _system('git config --local user.email ' + user_email)
-    out, err, retcode = _system('git config --global push.default simple')
-    out, err, retcode = _system('git checkout -b dev')
-
     out, err, retcode = _system('git commit -a -m ' + '"Hey there, here\'s a hook"')
     out, err, retcode = _system('git push -u origin dev')
-    
+
     if retcode == 0:
         pass
         # FLAG SUCCESS, ask push?
     else:
         print("ERROR: " + str(retcode))  # Not the best way to report errors
-
+        
 c.FileContentsManager.post_save_hook = save
 
 ## 
