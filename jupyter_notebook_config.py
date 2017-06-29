@@ -3,10 +3,10 @@ import subprocess
 import uuid
 
 
-user_name = 'Satyam Zode'
-github_user_name = 'satyamz'
-user_email = 'satyamzode@gmail.com'
-user_token = "your-token" 
+user_name = 'Your Name'
+github_user_name = 'github-user-name'
+user_email = 'you@email.com'
+user_token = "personal-access-token"
 branch_name = uuid.uuid4().hex + '-'+ github_user_name
 
 # Configuration file for jupyter-notebook.
@@ -578,21 +578,19 @@ def save(model, os_path, contents_manager):
     Saves the changes to your local machine, it is still not on the internet.
     Commits the modified file in the repository.
     """
-    out, err, retcode = _system('git add -u')
+    out, err, retcode = _system('git add *')
+    print("Doing: git add "+ str(err))
     out, err, retcode = _system('git reset -- jupyter_notebook_config.py')
-    out, err, retcode = _system('git commit -a -m ' + 'update file')
+    print("Doing: git reset "+ str(err))
+    out, err, retcode = _system('git commit -m "update file"')
+    print("Doing: git commit  "+str(err))
     out, err, retcode = _system('git push origin '+ branch_name)
-
-    if retcode == 0:
-        pass
-        # FLAG SUCCESS, ask push?
-    else:
-        print("ERROR: " + str(err))
+    print("Doing: git push  "+ str(err))
 
 def gitconfig(user_name, user_email, user_token, branch_name):
     out, err, retcode = _system('git config --local user.name ' + user_name)
     out, err, retcode = _system('git config --local user.email ' + user_email)
-    out, err, retcode = _system('git config --global push.default simple')
+    #out, err, retcode = _system('git config --global push.default simple')
     protocol = os.getenv("GIT_REPO").split("//")[0]
     github_repo = os.getenv("GIT_REPO").split("//")[1]
 
